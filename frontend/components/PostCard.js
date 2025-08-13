@@ -1,0 +1,2 @@
+import Link from 'next/link';
+export default function PostCard({post}){ return (<div className="border rounded-lg p-4 bg-white shadow-sm"><h3 className="text-xl font-semibold"><Link href={`/posts/${post.id}`}>{post.title}</Link></h3><p className="text-sm text-gray-500">by {post.author?.name} • {new Date(post.createdAt).toLocaleDateString()}</p><p className="mt-2">{post.content?.slice(0,160)}{post.content?.length>160?'…':''}</p></div>); }

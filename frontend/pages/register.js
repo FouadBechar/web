@@ -1,0 +1,6 @@
+import { useState } from 'react';
+import Layout from '../components/Layout';
+import { useRouter } from 'next/router';
+export default function Register(){ const [form,setForm]=useState({name:'',email:'',password:''}); const [err,setErr]=useState(''); const router=useRouter();
+async function submit(e){ e.preventDefault(); try{ const res=await fetch(`${process.env.NEXT_PUBLIC_API_URL||'http://localhost:4000'}/api/auth/register`,{ method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(form), credentials:'include' }); if(!res.ok) throw new Error((await res.json()).message||'Registration failed'); router.push('/posts'); } catch(e){ setErr(e.message); } }
+return (<Layout><h1 className="text-2xl font-bold mb-4">Create an account</h1><form onSubmit={submit} className="space-y-3 max-w-md"><input className="w-full border p-2 rounded" placeholder="Name" onChange={e=>setForm({...form,name:e.target.value})} /><input className="w-full border p-2 rounded" placeholder="Email" type="email" onChange={e=>setForm({...form,email:e.target.value})} /><input className="w-full border p-2 rounded" placeholder="Password" type="password" onChange={e=>setForm({...form,password:e.target.value})} />{err&&<p className="text-red-600">{err}</p>}<button className="px-4 py-2 bg-black text-white rounded">Register</button></form></Layout>); }
