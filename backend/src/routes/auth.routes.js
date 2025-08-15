@@ -4,13 +4,6 @@ import { registerUser, loginUser, logoutUser } from "../controllers/auth.control
 
 const router = express.Router();
 
-import { refreshSession } from "../controllers/auth.controller.js";
-router.post("/refresh", async (req, res) => {
-  try { await refreshSession(req, res); }
-  catch (e) { console.error("Refresh Error:", e); res.status(500).json({ message: "Internal server error" }); }
-});
-
-
 // Middleware للتحقق من الحقول المطلوبة
 function validateAuthFields(req, res, next) {
   const { name, email, password } = req.body;
