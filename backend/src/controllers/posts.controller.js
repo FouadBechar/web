@@ -14,4 +14,29 @@ export async function getPost(req, res, next) {
     res.json(post);
   } catch (e) { next(e); }
 }
+
+export async function updatePost(req, res, next) {
+  try {
+    const id = Number(req.params.id);
+    const data = postSchema.parse(req.body);
+    const post = await prisma.post.update({
+      where: { id },
+      data
+    });
+    res.json(post);
+  } catch (e) {
+    next(e);
+  }
+}
+
+export async function deletePost(req, res, next) {
+  try {
+    const id = Number(req.params.id);
+    await prisma.post.delete({ where: { id } });
+    res.status(204).end();
+  } catch (e) {
+    next(e);
+  }
+}
+
 export async function createPost(req, res, next) { try { const data = postSchema.parse(req.body); const post = await prisma.post.create({ data: { ...data, authorId: req.user.id } }); res.status(201).json(post); } catch (e) { next(e); } }
