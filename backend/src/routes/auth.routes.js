@@ -1,9 +1,56 @@
-import { Router } from "express";
-import { login, register, me, logout } from "../controllers/auth.controller.js";
-import { requireAuth } from "../middleware/auth.js";
-const r = Router();
-r.post("/register", register);
-r.post("/login", login);
-r.get("/me", requireAuth, me);
-r.post("/logout", requireAuth, logout);
-export default r;
+// routes/auth.routes.js
+import express from "express";
+import { registerUser, loginUser, logoutUser } from "../controllers/auth.controller.js";
+
+const router = express.Router();
+
+// Middleware للتحقق من الحقول المطلوبة
+function validateAuthFields(req, res, next) {
+  const { name, email, password } = req.body;
+
+  if (req.path === "/register") {
+    if (!name || !email || !password) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+  }
+
+  if (req.path === "/login") {
+    if (!email || !password) {
+      return res.status(400).json({ message: "Email and password are required" });
+    }
+  }
+
+  next();
+}
+
+// تسجيل مستخدم جديد
+router.post("/register", validateAuthFields, async (req, res, next) => {
+  try {
+    await registerUser(req, res);
+  } catch (err) {
+    console.error("Register Error:", err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+// تسجيل الدخول
+router.post("/login", validateAuthFields, async (req, res, next) => {
+  try {
+    await loginUser(req, res);
+  } catch (err) {
+    console.error("Login Error:", err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+// تسجيل الخروج
+router.post("/logout", async (req, res, next) => {
+  try {
+    await logoutUser(req, res);
+  } catch (err) {
+    console.error("Logout Error:", err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+export default router;
